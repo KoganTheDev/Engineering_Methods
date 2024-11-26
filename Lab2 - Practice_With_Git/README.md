@@ -55,7 +55,7 @@ git branch -d <branch-name>
 
 ---
 
-## 🌐 Resources  
+## 🌐 Resources
 - [Git Documentation](https://git-scm.com/doc)  
 - [Git Cheat Sheet (PDF)](https://education.github.com/git-cheat-sheet-education.pdf)  
 - [Learn Git with Tutorials](https://www.atlassian.com/git)  
