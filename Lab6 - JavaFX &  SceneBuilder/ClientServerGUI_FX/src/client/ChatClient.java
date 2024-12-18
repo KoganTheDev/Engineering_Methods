@@ -5,9 +5,12 @@
 package client;
 
 import ocsf.client.*;
-import common.*;
+import client.*;
+import common.ChatIF;
+import logic.Faculty;
+import logic.Student;
+
 import java.io.*;
-import java.util.ArrayList;
 
 /**
  * This class overrides some of the methods defined in the abstract
@@ -27,8 +30,9 @@ public class ChatClient extends AbstractClient
    * the display method in the client.
    */
   ChatIF clientUI; 
+  public static Student  s1 = new Student(null,null,null,new Faculty(null,null));
+  public static boolean awaitResponse = false;
 
-  
   //Constructors ****************************************************
   
   /**
@@ -38,16 +42,15 @@ public class ChatClient extends AbstractClient
    * @param port The port number to connect on.
    * @param clientUI The interface type variable.
    */
-  
+	 
   public ChatClient(String host, int port, ChatIF clientUI) 
     throws IOException 
   {
     super(host, port); //Call the superclass constructor
     this.clientUI = clientUI;
-    openConnection();
+    //openConnection();
   }
 
-  
   //Instance methods ************************************************
     
   /**
@@ -57,28 +60,49 @@ public class ChatClient extends AbstractClient
    */
   public void handleMessageFromServer(Object msg) 
   {
-    clientUI.display(msg.toString());
+	  System.out.println("--> handleMessageFromServer");
+     
+	  awaitResponse = false;
+	  String st;
+	  st=msg.toString();
+	  String[] result = st.split("\\s");
+	  s1.setId(result[0]);
+	  s1.setPName(result[1]);
+	  s1.setLName(result[2]);
+	  s1.setFc(new Faculty (result[3],result[4]));
+	 
   }
 
   /**
    * This method handles all data coming from the UI            
    *
-   * @param arrayList The message from the UI.    
+   * @param message The message from the UI.    
    */
-  public void handleMessageFromClientUI(ArrayList<String> arrayList)  
+  
+  public void handleMessageFromClientUI(String message)  
   {
     try
     {
-    	sendToServer(arrayList);
-    	System.out.println(arrayList.toString());
+    	openConnection();//in order to send more than one message
+       	awaitResponse = true;
+    	sendToServer(message);
+		// wait for response
+		while (awaitResponse) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
     }
     catch(IOException e)
     {
-      clientUI.display
-        ("Could not send message to server.  Terminating client.");
+    	e.printStackTrace();
+      clientUI.display("Could not send message to server: Terminating client."+ e);
       quit();
     }
   }
+
   
   /**
    * This method terminates the client.

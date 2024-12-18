@@ -1,13 +1,11 @@
 // This file contains material supporting section 3.7 of the textbook:
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com 
-
+package client;
 import java.io.*;
-import java.sql.SQLException;
-import java.util.ArrayList;
-
 import client.*;
-import common.*;
+import common.ChatIF;
+
 
 /**
  * This class constructs the UI for a chat client.  It implements the
@@ -19,14 +17,14 @@ import common.*;
  * @author Dr Robert Lagani&egrave;re
  * @version July 2000
  */
-public class ClientConsole implements ChatIF 
+public class ClientController implements ChatIF 
 {
   //Class variables *************************************************
   
   /**
    * The default port to connect on.
    */
-  final public static int DEFAULT_PORT = 5555;
+   public static int DEFAULT_PORT ;
   
   //Instance variables **********************************************
   
@@ -35,7 +33,6 @@ public class ClientConsole implements ChatIF
    */
   ChatClient client;
 
-  
   //Constructors ****************************************************
 
   /**
@@ -44,7 +41,7 @@ public class ClientConsole implements ChatIF
    * @param host The host to connect to.
    * @param port The port to connect on.
    */
-  public ClientConsole(String host, int port) 
+  public ClientController(String host, int port) 
   {
     try 
     {
@@ -52,8 +49,7 @@ public class ClientConsole implements ChatIF
     } 
     catch(IOException exception) 
     {
-      System.out.println("Error: Can't setup connection!"
-                + " Terminating client.");
+      System.out.println("Error: Can't setup connection!"+ " Terminating client.");
       System.exit(1);
     }
   }
@@ -65,31 +61,11 @@ public class ClientConsole implements ChatIF
    * This method waits for input from the console.  Once it is 
    * received, it sends it to the client's message handler.
    */
-  public void accept() 
+  public void accept(String str) 
   {
-	  
-    try
-    {
-      ArrayList<String> arrayList = new ArrayList<>();
-      BufferedReader fromConsole = 
-        new BufferedReader(new InputStreamReader(System.in));
-      String message;
-      
-      arrayList.add("Bob");
-      arrayList.add("123456");
-      arrayList.add("VIF project");
-      arrayList.add("7654321");
-      System.out.println(arrayList.toString());
-      
-      client.handleMessageFromClientUI(arrayList);
-    } 
-    catch (Exception ex) 
-    {
-      System.out.println
-        ("Unexpected error while reading from console!");
-    }
+	  client.handleMessageFromClientUI(str);
   }
-
+  
   /**
    * This method overrides the method in the ChatIF interface.  It
    * displays a message onto the screen.
@@ -99,31 +75,6 @@ public class ClientConsole implements ChatIF
   public void display(String message) 
   {
     System.out.println("> " + message);
-  }
-
-  
-  //Class methods ***************************************************
-  
-  /**
-   * This method is responsible for the creation of the Client UI.
-   *
-   * @param args[0] The host to connect to.
-   */
-  public static void main(String[] args) 
-  {
-    String host = "";
-    int port = 0;  //The port number
-
-    try
-    {
-      host = args[0];
-    }
-    catch(ArrayIndexOutOfBoundsException e)
-    {
-      host = "localhost";
-    }
-    ClientConsole chat= new ClientConsole(host, DEFAULT_PORT);
-    chat.accept();  //Wait for console data
   }
 }
 //End of ConsoleChat class
